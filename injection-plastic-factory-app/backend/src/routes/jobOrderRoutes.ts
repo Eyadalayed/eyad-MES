@@ -1,12 +1,13 @@
 import express from 'express';
-import { createJobOrder, getJobOrders, getJobOrderById, updateJobOrderStatus } from '../controllers/jobOrderController';
-import { authenticateToken, authorizeRole } from '../middlewares/authMiddleware';
+import { createJobOrder, getJobOrders, getJobOrderById, updateJobOrderStatus, getJobOrderProgress } from '../controllers/jobOrderController';
+import { authorizeRole } from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
-router.post('/', authenticateToken, authorizeRole(['manager', 'production_leader']), createJobOrder);
-router.get('/', authenticateToken, getJobOrders);
-router.get('/:id', authenticateToken, getJobOrderById);
-router.patch('/:id/status', authenticateToken, authorizeRole(['manager', 'production_leader']), updateJobOrderStatus);
+router.post('/', authorizeRole(['manager', 'admin']), createJobOrder);
+router.get('/', getJobOrders);
+router.get('/:id', getJobOrderById);
+router.patch('/:id/status', authorizeRole(['manager', 'admin']), updateJobOrderStatus);
+router.get('/:id/progress', getJobOrderProgress);
 
 export default router;

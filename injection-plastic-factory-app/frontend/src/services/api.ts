@@ -20,18 +20,31 @@ export const login = (username: string, password: string) =>
 export const register = (username: string, password: string, role: string) =>
   api.post('/users/register', { username, password, role });
 
+export const getJobOrders = () => api.get('/job-orders');
+
+export const createJobOrder = (orderData: {
+  order_number: string;
+  product_name: string;
+  quantity: number;
+  due_date: string;
+  special_instructions?: string;
+}) => api.post('/job-orders', orderData);
+
+export const getJobOrderById = (id: string) => api.get(`/job-orders/${id}`);
+
+export const updateJobOrderStatus = (id: string, status: string) =>
+  api.patch(`/job-orders/${id}/status`, { status });
+
+export const getJobOrderProgress = (id: string) => api.get(`/job-orders/${id}/progress`);
+
 export const getPallets = () => api.get('/pallets');
 
 export const createPallet = (jobOrderId: number) =>
   api.post('/pallets', { job_order_id: jobOrderId });
 
-export const getJobOrders = () => api.get('/job-orders');
-
-export const createJobOrder = (orderNumber: string, productName: string, quantity: number) =>
-  api.post('/job-orders', { order_number: orderNumber, product_name: productName, quantity });
-
 export const logout = () => {
   localStorage.removeItem('token');
 };
+
 
 export default api;
