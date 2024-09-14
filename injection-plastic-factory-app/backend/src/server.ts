@@ -10,11 +10,9 @@ import { authenticateToken } from './middlewares/authMiddleware';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000; // Changed to 5000 or use environment variable
+const port = process.env.PORT || 5000;
 
-app.use(cors({
-  origin: 'http://localhost:3000' // Allow requests from frontend
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

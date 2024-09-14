@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api'; // Adjust this port to match your backend
+const API_URL = 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -16,6 +16,9 @@ api.interceptors.request.use((config) => {
 
 export const login = (username: string, password: string) =>
   api.post('/users/login', { username, password });
+
+export const register = (username: string, password: string, role: string) =>
+  api.post('/users/register', { username, password, role });
 
 export const getPallets = () => api.get('/pallets');
 

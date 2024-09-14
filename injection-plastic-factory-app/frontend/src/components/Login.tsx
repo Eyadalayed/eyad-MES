@@ -10,13 +10,14 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
       const response = await login(username, password);
       localStorage.setItem('token', response.data.token);
       navigate('/pallets');
-    } catch (error) {
-      setError('Login failed. Please check your credentials.');
-      console.error('Login error:', error);
+    } catch (error: any) {
+      console.error('Login error:', error.response?.data || error.message);
+      setError(error.response?.data?.message || 'Login failed. Please try again.');
     }
   };
 
