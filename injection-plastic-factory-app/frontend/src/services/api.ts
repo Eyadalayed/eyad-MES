@@ -23,9 +23,18 @@ api.interceptors.response.use(
   }
 );
 
-export const login = (username: string, password: string) =>
+const login = (username: string, password: string) =>
   api.post('/users/login', { username, password });
 
-// ... other API functions ...
+const getPallets = () => api.get('/pallets');
 
+const createPallet = (jobOrderId: number) =>
+  api.post('/pallets', { job_order_id: jobOrderId });
+
+const getJobOrders = () => api.get('/job-orders');
+
+const createJobOrder = (orderNumber: string, productName: string, quantity: number) =>
+  api.post('/job-orders', { order_number: orderNumber, product_name: productName, quantity });
+
+export { login, getPallets, createPallet, getJobOrders, createJobOrder };
 export default api;
