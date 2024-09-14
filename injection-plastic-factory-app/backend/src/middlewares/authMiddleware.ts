@@ -15,11 +15,19 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
   if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
-    if (err) {
-      console.error('Token verification failed:', err);
-      return res.sendStatus(403);
-    }
+    if (err) return res.sendStatus(403);
     req.user = user;
     next();
   });
+};
+
+export const authorizeRole = (roles: string[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) return res.sendStatus(401);
+    if (roles.includes(req.user.role)) {
+      next();
+    } else {
+      res.sendStatus(403);
+    }
+  };
 };
