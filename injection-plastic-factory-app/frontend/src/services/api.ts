@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:5000/api'; // Adjust this port to match your backend
 
 const api = axios.create({
   baseURL: API_URL,
@@ -26,5 +26,9 @@ export const getJobOrders = () => api.get('/job-orders');
 
 export const createJobOrder = (orderNumber: string, productName: string, quantity: number) =>
   api.post('/job-orders', { order_number: orderNumber, product_name: productName, quantity });
+
+export const logout = () => {
+  localStorage.removeItem('token');
+};
 
 export default api;
