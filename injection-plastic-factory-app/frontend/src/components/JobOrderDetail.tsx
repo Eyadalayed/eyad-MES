@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getJobOrderProgress, updateJobOrderStatus } from '../services/api';
+import { getJobOrderById, updateJobOrderStatus, getJobOrderProgress } from '../services/api';
 
 interface JobOrder {
   id: number;
@@ -20,28 +20,25 @@ const JobOrderDetail: React.FC = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const fetchJobOrderProgress = async () => {
-      if (!id) {
-        navigate('/job-orders');
-        return;
-      }
-      try {
-        const response = await getJobOrderProgress(id);
-        setJobOrder(response.data.jobOrder);
-        setCompletedPallets(response.data.completedPallets);
-        setProgress(response.data.progress);
-      } catch (error) {
-        console.error('Error fetching job order progress:', error);
-      }
-    };
+    fetchJobOrderDetails();
+  }, [id]);
 
-    fetchJobOrderProgress();
-  }, [id, navigate]);
+  const fetchJobOrderDetails = async () => {
+    try {
+      const orderResponse = await getJobOrderById(id!);
+      setJobOrder(orderResponse.data);
+
+      const progressResponse = await getJobOrderProgress(id!);
+      setCompletedPallets(progressResponse.data.completedPallets);
+      setProgress(progressResponse.data.progress);
+    } catch (error) {
+      console.error('Error fetching job order details:', error);
+    }
+  };
 
   const handleStatusUpdate = async (newStatus: 'Pending' | 'In Progress' | 'Completed') => {
-    if (!id) return;
     try {
-      await updateJobOrderStatus(id, newStatus);
+      await updateJobOrderStatus(id!, newStatus);
       setJobOrder(prevState => prevState ? { ...prevState, status: newStatus } : null);
     } catch (error) {
       console.error('Error updating job order status:', error);
@@ -61,6 +58,7 @@ const JobOrderDetail: React.FC = () => {
       <p>Progress: {completedPallets} / {jobOrder.quantity} pallets completed ({progress.toFixed(2)}%)</p>
       <button onClick={() => handleStatusUpdate('In Progress')} disabled={jobOrder.status !== 'Pending'}>Start Production</button>
       <button onClick={() => handleStatusUpdate('Completed')} disabled={jobOrder.status === 'Completed'}>Mark as Completed</button>
+      <button onClick={() => navigate('/job-orders')}>Back to Job Orders</button>
     </div>
   );
 };

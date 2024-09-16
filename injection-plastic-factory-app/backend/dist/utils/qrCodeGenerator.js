@@ -14,14 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateQRCode = void 0;
 const qrcode_1 = __importDefault(require("qrcode"));
-const generateQRCode = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const qrCode = yield qrcode_1.default.toDataURL(data);
-        return qrCode;
-    }
-    catch (error) {
-        console.error('Error generating QR code:', error);
-        throw error;
-    }
-});
+function generateQRCode(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const url = yield qrcode_1.default.toDataURL(data);
+            return url;
+        }
+        catch (error) {
+            console.error('Error generating QR code:', error);
+            throw error;
+        }
+    });
+}
 exports.generateQRCode = generateQRCode;

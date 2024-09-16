@@ -24,10 +24,18 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
 export const authorizeRole = (roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) return res.sendStatus(401);
-    if (roles.includes(req.user.role)) {
+    if (req.user.role === 'admin' || roles.includes(req.user.role)) {
       next();
     } else {
       res.sendStatus(403);
     }
   };
+};
+
+export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.sendStatus(403);
+  }
 };

@@ -5,6 +5,9 @@ import Register from './components/Register';
 import JobOrderList from './components/JobOrderList';
 import JobOrderDetail from './components/JobOrderDetail';
 import PalletList from './components/PalletList';
+import PalletDetail from './components/PalletDetail';
+import Dashboard from './components/Dashboard';
+import Logout from './components/Logout';
 
 const App: React.FC = () => {
   return (
@@ -16,6 +19,8 @@ const App: React.FC = () => {
             <li><Link to="/register">Register</Link></li>
             <li><Link to="/job-orders">Job Orders</Link></li>
             <li><Link to="/pallets">Pallets</Link></li>
+            <li><Link to="/dashboard">Dashboard</Link></li>
+            <li><Logout /></li>
           </ul>
         </nav>
 
@@ -25,6 +30,8 @@ const App: React.FC = () => {
           <Route path="/job-orders" element={<JobOrderList />} />
           <Route path="/job-orders/:id" element={<JobOrderDetail />} />
           <Route path="/pallets" element={<PalletList />} />
+          <Route path="/pallets/:id" element={<PalletDetail />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </div>
     </Router>

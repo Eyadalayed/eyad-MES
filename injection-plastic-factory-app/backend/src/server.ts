@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/userRoutes';
 import jobOrderRoutes from './routes/jobOrderRoutes';
 import palletRoutes from './routes/palletRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
 import { errorHandler } from './middlewares/errorMiddleware';
 import { authenticateToken } from './middlewares/authMiddleware';
 
@@ -25,6 +26,7 @@ app.use(authenticateToken);
 // Routes that require authentication
 app.use('/api/job-orders', jobOrderRoutes);
 app.use('/api/pallets', palletRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

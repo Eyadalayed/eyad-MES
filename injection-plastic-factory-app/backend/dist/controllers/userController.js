@@ -12,35 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.register = void 0;
+exports.register = exports.login = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const database_1 = __importDefault(require("../database"));
-const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password, role } = req.body;
-    try {
-        if (!username || !password || !role) {
-            return res.status(400).json({ message: 'Username, password, and role are required' });
-        }
-        const [existingUsers] = yield database_1.default.query('SELECT * FROM users WHERE username = ?', [username]);
-        if (existingUsers.length > 0) {
-            return res.status(400).json({ message: 'Username already exists' });
-        }
-        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        yield database_1.default.query('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', [username, hashedPassword, role]);
-        res.status(201).json({ message: 'User registered successfully' });
-    }
-    catch (error) {
-        next(error);
-    }
-});
-exports.register = register;
-const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
     try {
-        if (!username || !password) {
-            return res.status(400).json({ message: 'Username and password are required' });
-        }
         const [users] = yield database_1.default.query('SELECT * FROM users WHERE username = ?', [username]);
         const user = users[0];
         if (!user || !(yield bcrypt_1.default.compare(password, user.password))) {
@@ -50,7 +28,25 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         res.json({ token });
     }
     catch (error) {
-        next(error);
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Error logging in', error });
     }
 });
 exports.login = login;
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, password, role } = req.body;
+    try {
+        const [existingUsers] = yield database_1.default.query('SELECT * FROM users WHERE username = ?', [username]);
+        if (existingUsers.length > 0) {
+            return res.status(400).json({ message: 'Username already exists' });
+        }
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        yield database_1.default.query('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', [username, hashedPassword, role]);
+        res.status(201).json({ message: 'User registered successfully' });
+    }
+    catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Error registering user', error });
+    }
+});
+exports.register = register;

@@ -13,10 +13,12 @@ interface JobOrder {
 
 const JobOrderList: React.FC = () => {
   const [jobOrders, setJobOrders] = useState<JobOrder[]>([]);
-  const [newOrderNumber, setNewOrderNumber] = useState('');
-  const [newProductName, setNewProductName] = useState('');
-  const [newQuantity, setNewQuantity] = useState('');
-  const [newDueDate, setNewDueDate] = useState('');
+  const [newJobOrder, setNewJobOrder] = useState({
+    order_number: '',
+    product_name: '',
+    quantity: 0,
+    due_date: '',
+  });
 
   useEffect(() => {
     fetchJobOrders();
@@ -27,68 +29,73 @@ const JobOrderList: React.FC = () => {
       const response = await getJobOrders();
       setJobOrders(response.data);
     } catch (error) {
-      console.error('Failed to fetch job orders:', error);
+      console.error('Error fetching job orders:', error);
     }
   };
 
-  const handleCreateJobOrder = async (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewJobOrder(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createJobOrder({
-        order_number: newOrderNumber,
-        product_name: newProductName,
-        quantity: parseInt(newQuantity),
-        due_date: newDueDate
+      await createJobOrder(newJobOrder);
+      setNewJobOrder({
+        order_number: '',
+        product_name: '',
+        quantity: 0,
+        due_date: '',
       });
       fetchJobOrders();
-      setNewOrderNumber('');
-      setNewProductName('');
-      setNewQuantity('');
-      setNewDueDate('');
     } catch (error) {
-      console.error('Failed to create job order:', error);
+      console.error('Error creating job order:', error);
     }
   };
 
   return (
     <div>
       <h2>Job Orders</h2>
-      <form onSubmit={handleCreateJobOrder}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={newOrderNumber}
-          onChange={(e) => setNewOrderNumber(e.target.value)}
+          name="order_number"
+          value={newJobOrder.order_number}
+          onChange={handleInputChange}
           placeholder="Order Number"
           required
         />
         <input
           type="text"
-          value={newProductName}
-          onChange={(e) => setNewProductName(e.target.value)}
+          name="product_name"
+          value={newJobOrder.product_name}
+          onChange={handleInputChange}
           placeholder="Product Name"
           required
         />
         <input
           type="number"
-          value={newQuantity}
-          onChange={(e) => setNewQuantity(e.target.value)}
+          name="quantity"
+          value={newJobOrder.quantity}
+          onChange={handleInputChange}
           placeholder="Quantity"
           required
         />
         <input
           type="date"
-          value={newDueDate}
-          onChange={(e) => setNewDueDate(e.target.value)}
+          name="due_date"
+          value={newJobOrder.due_date}
+          onChange={handleInputChange}
           required
         />
         <button type="submit">Create Job Order</button>
       </form>
       <ul>
-        {jobOrders.map((jobOrder) => (
+        {jobOrders.map(jobOrder => (
           <li key={jobOrder.id}>
             <Link to={`/job-orders/${jobOrder.id}`}>
-              Order Number: {jobOrder.order_number}, Product: {jobOrder.product_name}, 
-              Quantity: {jobOrder.quantity}, Status: {jobOrder.status}
+              Order: {jobOrder.order_number} - {jobOrder.product_name} ({jobOrder.status})
             </Link>
           </li>
         ))}

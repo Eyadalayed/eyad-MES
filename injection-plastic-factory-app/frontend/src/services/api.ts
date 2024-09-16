@@ -20,6 +20,15 @@ export const login = (username: string, password: string) =>
 export const register = (username: string, password: string, role: string) =>
   api.post('/users/register', { username, password, role });
 
+export const logout = async () => {
+  try {
+    await api.post('/users/logout');
+    localStorage.removeItem('token');
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+};
+
 export const getJobOrders = () => api.get('/job-orders');
 
 export const createJobOrder = (orderData: {
@@ -42,9 +51,14 @@ export const getPallets = () => api.get('/pallets');
 export const createPallet = (jobOrderId: number) =>
   api.post('/pallets', { job_order_id: jobOrderId });
 
-export const logout = () => {
-  localStorage.removeItem('token');
-};
+export const getPalletById = (id: string) => api.get(`/pallets/${id}`);
 
+export const updatePalletStatus = (id: string, status: string) =>
+  api.patch(`/pallets/${id}/status`, { status });
+
+export const performQualityCheck = (id: string, result: 'Pass' | 'Fail', notes: string) =>
+  api.post(`/pallets/${id}/quality-check`, { result, notes });
+
+export const getDashboardData = () => api.get('/dashboard');
 
 export default api;
